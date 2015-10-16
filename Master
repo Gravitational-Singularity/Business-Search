@@ -1,0 +1,259 @@
+/*
+CMPS 12B/M Homework 2
+
+This homework was really tough for me figuring out how to actually implement the algorithms, I wish we'd gone over how to do that in class more :/.
+
+Sorry if this is a bit confusing, I didn't have time to comment everything...
+
+http://stackoverflow.com/questions/20795158/sorting-names-using-merge-sort
+*/
+
+import java.util.*;
+import java.io.*;
+
+class BusinessSearch
+{
+	public static Scanner scanner = new Scanner(System.in);
+	public static Scanner scan = new Scanner(System.in);
+	public static String [] businessNames;
+	public static String [] businessPhones;
+	public static String [] workSpace1;
+	public static String [] workSpace2;
+	public static String [] workSpace3;
+	public static String [] workSpace4;
+	public static int queries = 0, numBusinesses = 0, failures = 0;
+		
+	public static void readin(String file) throws IOException
+	{
+		
+		BufferedReader in = new BufferedReader(new FileReader(file));
+		
+		numBusinesses = Integer.parseInt(in.readLine());
+		
+		businessNames = new String [numBusinesses];
+		businessPhones = new String [numBusinesses];
+		workSpace1 = new String [numBusinesses/2];
+		workSpace2 = new String [numBusinesses/2];
+		workSpace3 = new String [numBusinesses/2];
+		workSpace4 = new String [numBusinesses/2];
+		
+		for(int i = 0; i < numBusinesses; i++) 
+		{
+			String inputString = in.readLine();
+			// System.out.println("SWIFT TUTTLES");
+			String [] business = inputString.split(",");
+			for(int a = 0; a < business.length; a++)
+			{
+				// System.out.println(business[a]);
+				if(a % 2 == 0)
+				{
+					businessNames[i] = business[a];
+				} else 
+					{
+						businessPhones[i] = business[a];
+					}
+			}
+		}					
+	   in.close();
+	}
+	
+	public static void finder()
+	{
+		String input = scan.nextLine();
+		if(!input.equals(""))
+		{
+			for(int i = 0; i < businessNames.length; i++)
+			{
+				if(businessNames[i].equals(input))
+				{
+					System.out.println(businessPhones[i]);
+					return;
+				}
+			}
+
+				System.out.println("MATCH FAILED");
+				failures ++;
+		} else 
+			{
+				System.out.println("Total queries: " + queries + ". Total failures: " + failures + ".");
+				System.exit(0);
+			}
+
+	}
+	
+	public static void Mergesort()
+	{
+		int newArray = 0;
+		
+		
+		/* 	**************************************************************************************************
+			*/
+		for (int i = 0; i < businessNames.length; i++)
+		{
+			if((i < numBusinesses /2))
+			{
+					workSpace1[i] = businessPhones[i];
+					workSpace3[i] = businessNames[i];
+					
+			} 
+			if(i == numBusinesses /2)
+			{
+				newArray = i;
+			}
+			if(i == numBusinesses/2 || i > numBusinesses/2)
+			{
+				workSpace2[i - newArray] = businessNames[i];
+				workSpace4[i - newArray] = businessPhones[i];
+			}
+		}
+		
+		for(int b = 0; b < numBusinesses/2; b++)
+		{
+			System.out.println(workSpace3[b]);
+			System.out.println(workSpace1[b]);
+
+			System.out.println(workSpace2[b]);
+			System.out.println(workSpace4[b]);
+		}
+		
+		
+		sort();
+		
+		System.out.println("Second half.");
+		
+		merge();
+		for(int a = 0; a < numBusinesses/2; a++)
+		{
+			System.out.println(workSpace3[a]);
+			System.out.println(workSpace1[a]);
+
+			System.out.println(workSpace2[a]);
+			System.out.println(workSpace4[a]);
+		}
+	}	
+	
+	public static void merge ()
+	{
+		int a = 0, b = 0, j = 0;
+		while(j <= numBusinesses - 1)
+		{
+				System.out.println("hi " + j + a + b);
+				int compare = workSpace3[a].compareTo(workSpace2[b]);
+						
+						if((compare == 0) && (a < b))
+						{
+							workSpace2[a] = businessNames[j];
+							workSpace4[a] = businessPhones[j];
+							j++;
+							a++;
+						} 
+						if((compare == 0) && (b < a))
+						{
+							workSpace3[b] = businessNames[j];
+							workSpace1[b] = businessPhones[j];
+							j++;
+							b++;
+						}
+						
+
+							if(compare < 0)
+						{
+							workSpace2[a] = businessNames[j];
+							workSpace4[a] = businessPhones[j];
+							j++;
+							a++;
+						} else {
+							workSpace3[b] = businessNames[j];
+							workSpace1[b] = businessPhones[j];
+							j++;
+							b++;
+						}
+			}
+
+
+	}
+		
+	public static void sort()
+	{
+		for(int j = 0; j < numBusinesses/2 - 1; j++)
+		{
+				int compare = workSpace3[j].compareTo(workSpace3[j+1]);
+					if((compare < 0) || (compare == 0))
+				{
+					//workspace 3 J is smaller
+				}
+				
+				if (compare > 0)
+				{
+					String temp1 = workSpace3[j];
+					String temp2 = workSpace1[j];
+					
+					workSpace3[j] = workSpace3[j+1];
+					workSpace1[j] = workSpace1[j+1];
+					workSpace3[j+1] = temp1;
+					workSpace1[j+1] = temp2;
+				}
+		}
+		
+		for(int i = 0; i < numBusinesses/2 - 1; i++)
+		{
+				int compare = workSpace2[i].compareTo(workSpace2[i+1]);
+					if((compare < 0) || (compare == 0))
+				{
+					//workspace 3 J is smaller
+				}
+				
+				if (compare > 0)
+				{
+					String temp1 = workSpace2[i];
+					String temp2 = workSpace4[i];
+					
+					workSpace2[i] = workSpace2[i+1];
+					workSpace4[i] = workSpace4[i+1];
+					workSpace2[i+1] = temp1;
+					workSpace4[i+1] = temp2;
+				}
+		}
+	}
+	
+	
+	public static void main(String [] args)
+	{
+		try 
+		{
+			String file = null;
+			if(args.length == 0) 
+			{
+			System.out.println("No Arguments were given. You must invoke using a file name, i.e." + '"' + "BusinessSearch favorites.txt" + '"');
+			System.exit(0);
+			} else
+				{
+					file = args[0];
+					System.out.println(file);
+				}
+				readin(file);
+
+				   
+			  } catch (Exception e)
+			   	{
+			   		System.out.println("You're excepted" + e);
+			   	}
+					   			
+			Mergesort();
+			
+			System.out.println("Please enter the business names and numbers: ");
+			for(int a = 0; a < numBusinesses; a++)
+			{
+				System.out.println(businessNames[a]);
+				System.out.println(businessPhones[a]);
+			}
+			while(true)
+			{
+				System.out.println("What Businesses would you like to search for ?");
+				finder();
+				queries ++;
+			}
+			
+		}
+
+	}
